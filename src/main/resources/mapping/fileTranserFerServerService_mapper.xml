@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.file.filetransfer.dao.IFileTranserFerServerServiceDao">
+
+    <select id="getFileInfoByCode" parameterType="string" resultType="com.file.filetransfer.model.FileBean">
+  SELECT * FROM tb_filetransfer where code=#{_parameter}
+</select>
+    <!--插入临时数据-->
+    <insert id="insertFile" parameterType="com.file.filetransfer.model.FileBean">
+    insert into tb_filetransfer
+    (code,file_name,tmp_linux_address,fact_linux_address,create_time)
+    values
+    (#{code},#{file_name,jdbcType=VARCHAR},#{tmp_linux_address,jdbcType=VARCHAR},#{fact_linux_address,jdbcType=VARCHAR},sysdate)
+  </insert>
+    <!--清空掉临时数据-->
+    <delete id="deleteTmpData">
+      delete from tb_filetransfer where tmp_linux_address is NOT null
+    </delete>
+    <!--将上传文件转移到正式仓库-->
+    <update id="updateTmpLinuxAddressByCode" parameterType="string">
+        update tb_filetransfer set tmp_linux_address=null where code =#{_parameter}
+    </update>
+</mapper>

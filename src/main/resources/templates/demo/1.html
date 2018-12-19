@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+</head>
+<body>
+qqqq嗡嗡嗡qqeeeee11
+<h1 th:text="${name}">你好啊</h1>
+<h1 th:text="@{'1+3='+${1+3}}"></h1>
+<h1 th:text="@{'字符串拼接1:'+${name}}">你好啊</h1>
+<h1 th:text="@{字符串拼接2:{myname}(myname=${name})}">你好啊</h1>
+<ul>
+    <li th:each="item:${list}" th:text="${item}"></li>
+    <li th:each="item:${list}">
+        <span th:text="${item}"></span>-
+    </li>
+</ul>
+
+</body>
+</html>

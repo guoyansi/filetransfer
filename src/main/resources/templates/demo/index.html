@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script th:src="@{/js/jquery-2.1.4.js}"></script>
+    <script th:src="@{/js/jquery.ui.widget.js}"></script>
+    <script th:src="@{/js/jquery.iframe-transport.js}"></script>
+    <script th:src="@{/js/jquery.iframe-transport.js}"></script>
+    <script th:src="@{/js/jquery.fileupload.js}"></script>
+</head>
+<body>
+<hr/>
+<h1>form上传</h1>
+<form enctype="multipart/form-data" method="post" th:action="@{/upload?itemCode=demo}">
+    选择文件：<input type="file" name="file"/> <br/>
+    <button type="submit">上传</button>
+    <span>&nbsp;&nbsp;</span>
+    <button type="reset">重选</button>
+    <br/>
+    <label>获取上传文件的路径</label>
+    <img th:src="@{/upload/demo/1.jpg}" width="50">
+    <label>获取项目中的静态文件</label>
+    <img th:src="@{/img/2.jpg}"  width="50">
+</form>
+<hr/>
+<h1>上传成功，文件切换到正式仓库</h1>
+<form target="_blank" method="post" th:action="@{/moveFileToRep}">
+    <label>临时路径：</label>
+    <input type="text" name="oldUrl" value="" />
+    <label>真实路径</label>
+    <input type="text" name="newUrl" value="" />
+    <input type="submit" value="上传成功，文件切换到正式仓库">
+</form>
+<hr/>
+<h1>异步上传</h1>
+<input id="fileupload" type="file" name="file">
+<hr/>
+<h1>form表单下载</h1>
+<form target="_blank" method="post" th:action="@{/download}">
+    <label>下载路径,一般是上传后获取到的路径：</label>
+    <input th:if="${env} eq 'dev'" name="url" type="text" value="e:/upload/1.jpg"><br/>
+    <input th:if="${env} eq 'pro'" name="url" type="text" value="/opt/filetransfer/download/1.pdf"><br/>
+    <label>下载后文件名,不指定就是默认文件名：</label>
+    <input  name="fileName" type="text" value="gys.jpg"><br/>
+    <input type="submit" value="下载">
+</form>
+
+<hr/>
+<h1>form表单通过ftp下载其他服务器上的文件</h1>
+<form target="_blank" method="post" th:action="@{/ftpToDownloadFile}">
+    <label>下载路径,一般是上传后获取到的路径：</label>
+    <input  name="url" type="text" value="e:\upload\test.docx"><br/>
+    <label>下载后文件名,不指定就是默认文件名：</label>
+    <input  name="fileName" type="text" value="aa.docx"><br/>
+    <input type="submit" value="下载">
+</form>
+<script th:inline="javascript">
+    var baseUrl =[[${#servletContext.contextPath}]];
+    $(function () {
+        $.ajax({
+            url:baseUrl+"/ajax",
+            type:"get",
+            success:function (data) {
+                console.log(data);
+            }
+        });
+    });
+
+   /* function uploadAction(){
+
+    }*/
+    $('#fileupload').fileupload({
+        url:baseUrl+"/upload",
+        dataType: 'json',
+        autoUpload:true,//选择好上传文件，是否直接上传
+        //acceptFileTypes:/(\.|\/)(gif|jpe?g|png|xlsx)$/i
+        maxFileSize:10000,//单位是B
+        minFileSize:0.1,  //单位是B
+        previewMaxWidth:1000, //图片预览区域最大宽度
+        add:function(e,data){//当文件被添加到上传组件时被触发
+            console.log("add:======");
+            console.log(data)
+        },
+        // 上传完成后的执行逻辑
+        done: function (e, data) {
+            console.log("上传完成:结果如下=====");
+            console.log(data);
+           /* $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo(document.body);
+            });*/
+        },
+        progressall: function (e, data) {// 全局上传过程中的回调函数
+           var progress = parseInt(data.loaded / data.total * 100, 10);
+           console.log(progress);
+        },
+        processalways:function (e,data) {//当一个单独的文件处理队列结束（完成或失败时）触发
+            console.log("processalways:=======");
+            console.log(data);
+        },
+        fail:function (e,data) {//上传失败触发
+            
+        },
+        always:function (e,data) {//成功和失败都触发
+            
+        }
+    });
+    
+    function  uploadSuccessCallback() {
+        
+    }
+    
+</script>
+</body>
+</html>
